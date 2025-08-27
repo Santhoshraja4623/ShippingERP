@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Ship Performance</title>
+    <h:outputStylesheet>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fa;
+            color: #333;
+        }
+
+        .header-bar {
+            background: linear-gradient(to right, #007ad9, #005b9f);
+            color: white;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card-panel {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .value {
+            color: #222;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+    </h:outputStylesheet>
+</h:head>
+
+<h:body>
+    <div class="header-bar">
+        🚢 Ship Performance Summary
+    </div>
+
+    <div class="content">
+        <h:form id="form">
+            <div class="button-group">
+                <p:commandButton value="Back to Home"
+                                 icon="pi pi-arrow-left"
+                                 action="/home?faces-redirect=true"
+                                 immediate="true"
+                                 styleClass="ui-button-secondary" />
+            </div>
+
+            <p:panel header="Select a Ship" styleClass="card-panel" style="margin-top: 20px;">
+                <p:selectOneMenu value="#{shipBean.selectedShipId}" style="width: 100%;">
+                    <f:selectItem itemLabel="-- Choose Ship --" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{shipBean.allShips}" var="s"
+                                   itemValue="#{s.shipID}" itemLabel="#{s.name}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton value="Load Summary"
+                                 actionListener="#{shipBean.loadSummary}"
+                                 update="summary"
+                                 icon="pi pi-chart-line"
+                                 styleClass="p-ml-2 p-mt-2 ui-button-success" />
+            </p:panel>
+
+            <p:panel id="summary"
+                     header="Performance Summary"
+                     rendered="#{not empty shipBean.summary}"
+                     styleClass="card-panel"
+                     style="margin-top: 30px;">
+                <h:panelGrid columns="2" columnClasses="label,value" cellpadding="6">
+                    <h:outputText value=" Ship:" />
+                    <h:outputText value="#{shipBean.summary.shipName}" />
+
+                    <h:outputText value=" Voyages:" />
+                    <h:outputText value="#{shipBean.summary.voyageCount}" />
+
+                    <h:outputText value=" Total Revenue:" />
+                    <h:outputText value="#{shipBean.summary.totalRevenue}" />
+
+                    <h:outputText value=" Total Cost:" />
+                    <h:outputText value="#{shipBean.summary.totalCost}" />
+
+                    <h:outputText value=" Total Profit:" />
+                    <h:outputText value="#{shipBean.summary.totalProfit}" />
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+</html>

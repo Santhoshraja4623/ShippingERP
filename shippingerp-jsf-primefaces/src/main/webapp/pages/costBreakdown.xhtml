@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Cost and Revenue Breakdown</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+         .header-bar {
+            background: linear-gradient(to right, #007ad9, #005b9f);
+            color: white;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-button {
+            margin-bottom: 1rem;
+        }
+
+        .section-panel {
+            margin-top: 2rem;
+        }
+
+        .select-menu {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .action-buttons {
+            margin-top: 1rem;
+        }
+
+        .data-table th, .data-table td {
+            text-align: center;
+        }
+    </style>
+</h:head>
+
+<h:body>
+      <div class="header-bar">
+        Cost And Revenue Breakdown
+    </div>
+    <h:form id="form">
+        <div class="container">
+
+            <!-- Back to Home Button -->
+            <div class="header-button">
+                <p:commandButton value="Back to Home" icon="pi pi-arrow-left"
+                                 action="/home?faces-redirect=true"
+                                 immediate="true"
+                                 styleClass="ui-button-secondary" />
+            </div>
+
+            <!-- Voyage Selection Panel -->
+            <p:panel header="🚢 Select Voyage" styleClass="section-panel">
+                <p:selectOneMenu value="#{costBean.selectedVoyageId}" styleClass="select-menu">
+                    <f:selectItem itemLabel="-- choose voyage --" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{costBean.allVoyageIds}" var="vid" itemValue="#{vid}" itemLabel="Voyage #{vid}"/>
+                </p:selectOneMenu>
+
+                <div class="action-buttons">
+                    <p:commandButton value="Load Breakdown"
+                                     actionListener="#{costBean.loadBreakdown}"
+                                     update="costTable revenueTable"
+                                     icon="pi pi-refresh"
+                                     styleClass="ui-button-success" />
+                </div>
+            </p:panel>
+
+            <!-- Cost Breakdown Table -->
+            <p:panel id="costTable" header=" Cost Breakdown" rendered="#{not empty costBean.breakdown}" styleClass="section-panel">
+                <p:dataTable value="#{costBean.breakdown}" var="b" styleClass="data-table" stripedRows="true" responsiveLayout="scroll">
+                    <p:column headerText="Cost Type">
+                        #{b.costType}
+                    </p:column>
+                    <p:column headerText="Total Amount">
+                        $ #{b.totalAmount}
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <!-- Revenue Breakdown Table -->
+            <p:panel id="revenueTable" header=" Revenue Breakdown" rendered="#{not empty costBean.revenueBreakdown}" styleClass="section-panel">
+                <p:dataTable value="#{costBean.revenueBreakdown}" var="r" styleClass="data-table" stripedRows="true" responsiveLayout="scroll">
+                    <p:column headerText="Revenue Type">
+                        #{r.revenueType}
+                    </p:column>
+                    <p:column headerText="Total Amount">
+                        $ #{r.totalAmount}
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+        </div>
+    </h:form>
+</h:body>
+</html>

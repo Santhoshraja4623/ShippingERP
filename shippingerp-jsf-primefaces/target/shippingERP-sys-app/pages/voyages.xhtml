@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Voyage Profitability Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- PrimeFaces Theme -->
+    <h:outputStylesheet library="primefaces" name="themes/saga/theme.css" />
+
+    <h:outputStylesheet>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap');
+
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .header-bar {
+            background-color: #007acc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .toolbar-wrapper {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .p-datatable .ui-datatable-data tr:nth-child(even) {
+            background-color: #f9fbfc;
+        }
+
+        .p-datatable .ui-datatable-data tr:hover {
+            background-color: #d0e7ff !important;
+            cursor: pointer;
+        }
+
+        .profit-positive {
+            color: green;
+            font-weight: bold;
+        }
+
+        .profit-negative {
+            color: red;
+            font-weight: bold;
+        }
+    </h:outputStylesheet>
+</h:head>
+
+<h:body>
+    <h:form id="form">
+
+        <!-- Header -->
+        <div class="header-bar">
+            <h2>🚢 Voyage Profitability Dashboard</h2>
+        </div>
+
+        <div class="page-wrapper">
+
+            <!-- Toolbar -->
+            <div class="toolbar-wrapper">
+                <p:commandButton value="Back to Home" icon="pi pi-arrow-left"
+                                 action="/home?faces-redirect=true"
+                                 immediate="true"
+                                 styleClass="p-button-secondary" />
+
+            
+
+            <p:commandButton value="Export to Excel" icon="pi pi-file-excel"
+                                 styleClass="p-button-success"
+                                 ajax="false">
+                    <p:dataExporter type="xlsx" target="voyTable" fileName="voyage_report" />
+                </p:commandButton>
+            </div>
+
+            <!-- DataTable -->
+            <p:dataTable id="voyTable"
+                         value="#{voyageBean.voyages}"
+                         var="v"
+                         paginator="true"
+                         rows="10"
+                         widgetVar="voyTable"
+                         sortBy="#{v.voyageID}"
+                         sortMode="single"
+                         responsiveLayout="stack"
+                         
+                         styleClass="p-datatable-gridlines">
+
+                <p:column headerText="Voyage ID" sortBy="#{v.voyageID}">
+                    <h:outputText value="#{v.voyageID}" />
+                </p:column>
+
+                <p:column headerText="Ship" sortBy="#{v.shipName}" filterBy="#{v.shipName}" filterMatchMode="contains">
+                    <h:outputText value="#{v.shipName}" />
+                </p:column>
+
+                <p:column headerText="Route" sortBy="#{v.route}" filterBy="#{v.route}" filterMatchMode="contains">
+                    <h:outputText value="#{v.route}" />
+                </p:column>
+
+                <p:column headerText="📅 Start Date">
+                    <h:outputText value="#{v.startDateFormatted}" />
+                </p:column>
+
+                <p:column headerText="📅 End Date">
+                    <h:outputText value="#{v.endDateFormatted}" />
+                </p:column>
+
+                <p:column headerText="Distance (NM)">
+                    <h:outputText value="#{v.distance}" />
+                </p:column>
+
+                <p:column headerText="Revenue ($)" sortBy="#{v.totalRevenue}">
+                    <h:outputText value="#{v.totalRevenue}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Cost ($)" sortBy="#{v.totalCost}">
+                    <h:outputText value="#{v.totalCost}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Profit ($)" sortBy="#{v.profit}">
+                    <h:outputText value="#{v.profit}" styleClass="#{v.profit ge 0 ? 'profit-positive' : 'profit-negative'}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+
+            </p:dataTable>
+
+
+        </div>
+    </h:form>
+</h:body>
+</html>

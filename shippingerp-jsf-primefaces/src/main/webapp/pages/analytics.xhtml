@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Analytics Dashboard</title>
+    <style>
+       
+        body, html {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            color: #2c3e50;
+        }
+        h2 {
+            font-weight: 700;
+            text-align: center;
+            margin: 2rem 0 1.5rem 0;
+            color: #34495e;
+            letter-spacing: 0.05em;
+            font-size: 2rem;
+        }
+        .toolbar-wrapper {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Tab styling */
+        .ui-tabview .ui-tabview-nav li a {
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: #2980b9 !important;
+            padding: 0.8em 1.6em;
+            border-radius: 6px 6px 0 0;
+            transition: background-color 0.3s ease;
+        }
+        .ui-tabview .ui-tabview-nav li.ui-state-active a {
+            background-color: #2980b9 !important;
+            color: #fff !important;
+            font-weight: 700;
+        }
+        .ui-tabview-panels {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 1.5rem 1.5rem 2rem 1.5rem;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* DataTable styling */
+        .ui-datatable {
+            font-size: 0.95rem;
+            color: #34495e;
+        }
+        .ui-datatable table {
+            border-collapse: separate !important;
+            border-spacing: 0 0.8rem !important; /* vertical spacing between rows */
+        }
+        .ui-datatable tbody > tr {
+            background-color: #fafafa !important;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .ui-datatable tbody > tr:hover {
+            background-color: #e8f1fb !important;
+            cursor: pointer;
+        }
+        .ui-datatable th {
+            background-color: #2980b9;
+            color: #fff;
+            font-weight: 700;
+            padding: 0.8rem 1rem;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .ui-tabview .ui-tabview-nav li a {
+                font-size: 1rem;
+                padding: 0.6em 1em;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</h:head>
+<h:body>
+    <h:form style="max-width: 1200px; margin: auto; padding: 1rem;">
+
+         <div class="toolbar-wrapper">
+                <p:commandButton value="Back to Home" icon="pi pi-arrow-left"
+                                 action="/home?faces-redirect=true"
+                                 immediate="true"
+                                 styleClass="p-button-secondary" />
+           </div> 
+
+        <h2>Analytics Dashboard</h2>
+
+        <p:tabView activeIndex="0" cache="false">
+
+            <p:tab title="Average Profit By Ship">
+                <p:dataTable value="#{analyticsBean.avgProfitByShipList}" var="item" 
+                             emptyMessage="No data found" paginator="true" rows="8" 
+                             style="width: 100%;" responsiveLayout="stack" styleClass="ui-datatable-striped">
+
+                    <p:column headerText="Ship Name" sortBy="#{item.shipName}">
+                        <h:outputText value="#{item.shipName}" />
+                    </p:column>
+
+                    <p:column headerText="Average Revenue" sortBy="#{item.avgRevenue}">
+                        <h:outputText value="#{item.avgRevenue}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Average Cost" sortBy="#{item.avgCost}">
+                        <h:outputText value="#{item.avgCost}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Average Profit" sortBy="#{item.avgProfit}">
+                        <h:outputText value="#{item.avgProfit}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Profit Margin (%)" sortBy="#{item.profitMarginPct}">
+                        <h:outputText value="#{item.profitMarginPct}">
+                            <f:convertNumber maxFractionDigits="2" />
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </p:tab>
+
+            <p:tab title="Fuel Efficiency Impact">
+                <p:dataTable value="#{analyticsBean.fuelEfficiencyImpactList}" var="item" 
+                             emptyMessage="No data found" paginator="true" rows="8" 
+                             style="width: 100%;" responsiveLayout="stack" styleClass="ui-datatable-striped">
+
+                    <p:column headerText="Voyage ID" sortBy="#{item.voyageID}">
+                        <h:outputText value="#{item.voyageID}" />
+                    </p:column>
+
+                    <p:column headerText="Ship Name" sortBy="#{item.shipName}">
+                        <h:outputText value="#{item.shipName}" />
+                    </p:column>
+
+                    <p:column headerText="Fuel Efficiency" sortBy="#{item.fuelEfficiency}">
+                        <h:outputText value="#{item.fuelEfficiency}" />
+                    </p:column>
+
+                    <p:column headerText="Distance" sortBy="#{item.distance}">
+                        <h:outputText value="#{item.distance}" />
+                    </p:column>
+
+                    <p:column headerText="Estimated Gallons" sortBy="#{item.estimatedGallons}">
+                        <h:outputText value="#{item.estimatedGallons}">
+                            <f:convertNumber maxFractionDigits="2" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Fuel Price per Gallon" sortBy="#{item.fuelPricePerGallon}">
+                        <h:outputText value="#{item.fuelPricePerGallon}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Estimated Fuel Cost" sortBy="#{item.estimatedFuelCost}">
+                        <h:outputText value="#{item.estimatedFuelCost}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Profit" sortBy="#{item.profit}">
+                        <h:outputText value="#{item.profit}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Profit Per Gallon" sortBy="#{item.profitPerGallon}">
+                        <h:outputText value="#{item.profitPerGallon}">
+                            <f:convertNumber maxFractionDigits="4" />
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </p:tab>
+
+        </p:tabView>
+    </h:form>
+</h:body>
+</html>

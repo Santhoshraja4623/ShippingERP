@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Add New Voyage</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+          .header-bar {
+            background: linear-gradient(to right, #007ad9, #005b9f);
+            color: white;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .form-container {
+            max-width: 700px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-header {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+
+        .section-label {
+            font-weight: bold;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: #34495e;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .form-actions {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</h:head>
+
+<h:body>
+      <div class="header-bar">
+        Add New Voyage
+    </div>
+    <h:form id="voyageForm">
+        <p:growl id="messages" showDetail="true" life="4000" />
+
+        <div class="form-container">
+
+           
+
+            <p:panel styleClass="ui-panel ui-widget-content">
+
+                <!-- Ship Selection -->
+                <h:outputLabel value="Select Existing Ship:" styleClass="section-label" />
+                <p:selectOneMenu id="shipId" value="#{voyageBean.newVoyage.shipID}" styleClass="full-width"
+                                 disabled="#{not empty voyageBean.newVoyage.newShipName or not empty voyageBean.newVoyage.newShipCapacity or not empty voyageBean.newVoyage.newShipFuelEfficiency}">
+                    <f:selectItem itemLabel="-- Select Ship --" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{voyageBean.shipItems}" />
+                </p:selectOneMenu>
+                <p:message for="shipId" />
+
+                <!-- Divider -->
+                <h:outputLabel value="Or Add New Ship:" styleClass="section-label" />
+                <h:outputText value="Fill in the fields below to register a new ship." />
+
+                <!-- New Ship Details -->
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" styleClass="p-mt-2" layout="grid">
+                    <h:outputLabel for="newShipName" value="Ship Name:" />
+                    <p:inputText id="newShipName" value="#{voyageBean.newVoyage.newShipName}" maxlength="100" styleClass="full-width" />
+
+                    <h:outputLabel for="newShipCapacity" value="Capacity (tons):" />
+                    <p:inputNumber id="newShipCapacity" value="#{voyageBean.newVoyage.newShipCapacity}" minValue="1" styleClass="full-width" />
+
+                    <h:outputLabel for="newShipFuelEfficiency" value="Fuel Efficiency (Gallons/NM):" />
+                    <p:inputNumber id="newShipFuelEfficiency" value="#{voyageBean.newVoyage.newShipFuelEfficiency}" minValue="0.01" step="0.01" styleClass="full-width" />
+                </p:panelGrid>
+
+                <!-- Voyage Details -->
+                <h:outputLabel value="Voyage Details:" styleClass="section-label" />
+
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" styleClass="p-mt-2" layout="grid">
+                    <h:outputLabel for="startDate" value="Start Date:" />
+                    <p:datePicker id="startDate" value="#{voyageBean.newVoyage.startDate}"
+                                  pattern="yyyy-MM-dd" required="true" requiredMessage="Start Date is required"
+                                  showIcon="true" styleClass="full-width" />
+
+                    <h:outputLabel for="endDate" value="End Date:" />
+                    <p:datePicker id="endDate" value="#{voyageBean.newVoyage.endDate}"
+                                  pattern="yyyy-MM-dd" required="true" requiredMessage="End Date is required"
+                                  showIcon="true" styleClass="full-width" />
+
+                    <h:outputLabel for="route" value="Route:" />
+                    <p:inputText id="route" value="#{voyageBean.newVoyage.route}" required="true"
+                                 requiredMessage="Route is required" styleClass="full-width" />
+
+                    <h:outputLabel for="distance" value="Distance (NM):" />
+                    <p:inputNumber id="distance" value="#{voyageBean.newVoyage.distance}" required="true"
+                                   minValue="1" requiredMessage="Distance is required" styleClass="full-width" />
+                </p:panelGrid>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <p:commandButton value=" Save Voyage" icon="pi pi-check"
+                                     action="#{voyageBean.saveVoyage}"
+                                     update="voyageForm messages"
+                                     styleClass="ui-button-success" />
+
+                    <p:commandButton value=" Back to Home" icon="pi pi-arrow-left"
+                                     action="/home?faces-redirect=true"
+                                     immediate="true"
+                                     styleClass="ui-button-secondary" />
+                </div>
+
+            </p:panel>
+        </div>
+    </h:form>
+</h:body>
+</html>

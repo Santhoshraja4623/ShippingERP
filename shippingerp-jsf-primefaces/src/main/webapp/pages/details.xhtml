@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Ship and Voyage Details</title>
+    
+    <h:outputStylesheet>
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 25px 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-bar h2 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #00bfff;
+            text-shadow: 1px 1px 6px rgba(0,191,255,0.8);
+        }
+
+        .toolbar-wrapper {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ui-tabview {
+            background: #222;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .ui-dataTable thead th {
+            background: #00bfff !important;
+            color: #000 !important;
+            font-weight: 600 !important;
+        }
+
+        .ui-datatable tbody tr {
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .ui-datatable tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .ui-paginator {
+            background: transparent !important;
+            color: #e0e0e0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px;
+                padding: 15px 20px;
+            }
+
+            .header-bar h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </h:outputStylesheet>
+</h:head>
+
+<h:body>
+    <h:form id="detailsForm">
+
+        <div class="container">
+            <div class="header-bar">
+                <h2>Details Dashboard</h2>
+<div class="toolbar-wrapper">
+                <p:commandButton value="Back to Home" icon="pi pi-arrow-left"
+                                 action="/home?faces-redirect=true"
+                                 immediate="true"
+                                 styleClass="p-button-secondary" />
+           </div> 
+            </div>
+
+            <p:growl id="msgs" showDetail="true" life="3000" />
+
+            <p:tabView dynamic="true" cache="false" style="width:100%">
+
+              <p:tab title="Ships">
+    
+    <!-- Ship Data Table with Selection -->
+    <p:dataTable id="shipTable" var="ship" value="#{detailsBean.ships}" paginator="true" rows="10"
+                 selection="#{detailsBean.selectedShip}" selectionMode="single"
+                 rowKey="#{ship.shipId}" emptyMessage="No ships found">
+
+        <p:ajax event="rowSelect" update=":detailsForm:editShipPanel :detailsForm:msgs" />
+
+        <p:column headerText="Ship ID">
+            <h:outputText value="#{ship.shipId}" />
+        </p:column>
+
+        <p:column headerText="Name">
+            <h:outputText value="#{ship.name}" />
+        </p:column>
+
+        <p:column headerText="Capacity (tons)">
+            <h:outputText value="#{ship.capacity}" />
+        </p:column>
+
+        <p:column headerText="Fuel Efficiency (gal/nm)">
+            <h:outputText value="#{ship.fuelEfficiency}" />
+        </p:column>
+    </p:dataTable>
+
+    <p:separator style="margin:20px 0;" />
+
+    <!-- Add Ship Form -->
+    <h3 style="color:#00bfff;">Add New Ship</h3>
+    <h:panelGrid columns="2" cellpadding="5">
+        <h:outputLabel value="Name:" />
+        <p:inputText value="#{detailsBean.newShip.name}" required="true" />
+
+        <h:outputLabel value="Capacity:" />
+        <p:inputText value="#{detailsBean.newShip.capacity}" required="true" />
+
+        <h:outputLabel value="Fuel Efficiency:" />
+        <p:inputText value="#{detailsBean.newShip.fuelEfficiency}" required="true" />
+    </h:panelGrid>
+
+    <p:commandButton value="Add Ship" icon="pi pi-plus"
+                     action="#{detailsBean.addShip}"
+                     update=":detailsForm:shipTable :detailsForm:msgs"
+                     styleClass="p-button-success" style="margin-top:10px;" />
+
+    <p:separator style="margin:30px 0;" />
+
+    <!-- Edit/Delete Panel -->
+    <h:panelGroup id="editShipPanel" layout="block">
+        <h3 style="color:#00bfff;">Edit or Delete Selected Ship</h3>
+
+        <h:panelGrid columns="2" cellpadding="5" rendered="#{detailsBean.selectedShip != null}">
+            <h:outputLabel value="Name:" />
+            <p:inputText value="#{detailsBean.selectedShip.name}" required="true" />
+
+            <h:outputLabel value="Capacity:" />
+            <p:inputText value="#{detailsBean.selectedShip.capacity}" required="true" />
+
+            <h:outputLabel value="Fuel Efficiency:" />
+            <p:inputText value="#{detailsBean.selectedShip.fuelEfficiency}" required="true" />
+        </h:panelGrid>
+
+        <p:commandButton value="Update Ship" icon="pi pi-pencil"
+                         action="#{detailsBean.updateShip}"
+                         update=":detailsForm:shipTable :detailsForm:msgs"
+                         styleClass="p-button-warning"
+                         rendered="#{detailsBean.selectedShip != null}" 
+                         style="margin-right:10px;" />
+
+        <p:commandButton value="Delete Ship" icon="pi pi-trash"
+                         action="#{detailsBean.deleteShip}"
+                         update=":detailsForm:shipTable :detailsForm:editShipPanel :detailsForm:msgs"
+                         styleClass="p-button-danger"
+                         rendered="#{detailsBean.selectedShip != null}" />
+    </h:panelGroup>
+</p:tab>
+
+
+
+                <!-- Voyages Tab -->
+                <p:tab title="Voyages">
+                    <p:dataTable var="voyage" value="#{detailsBean.voyages}" paginator="true" rows="10"
+                                 sortBy="#{voyage.voyageId}" rowKey="#{voyage.voyageId}" responsive="true" 
+                                 emptyMessage="No voyages found">
+
+                        <p:column headerText="Voyage ID" sortBy="#{voyage.voyageId}">
+                            <h:outputText value="#{voyage.voyageId}" />
+                        </p:column>
+
+                        <p:column headerText="Ship Name" sortBy="#{voyage.shipName}">
+                            <h:outputText value="#{voyage.shipName}" />
+                        </p:column>
+
+                        <p:column headerText="Route" sortBy="#{voyage.route}">
+                            <h:outputText value="#{voyage.route}" />
+                        </p:column>
+
+                        <p:column headerText="Start Date" sortBy="#{voyage.startDate}">
+                            <h:outputText value="#{voyage.startDate}">
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="End Date" sortBy="#{voyage.endDate}">
+                            <h:outputText value="#{voyage.endDate}">
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Distance (nm)" sortBy="#{voyage.distance}">
+                            <h:outputText value="#{voyage.distance}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+                <!-- Cost Types Tab -->
+                <p:tab title="Cost Types">
+                    <p:dataTable var="costType" value="#{detailsBean.costTypes}" paginator="true" rows="10"
+                                 sortBy="#{costType.name}" rowKey="#{costType.costTypeId}" responsive="true" 
+                                 emptyMessage="No cost types found">
+
+                        <p:column headerText="Cost Type ID" sortBy="#{costType.costTypeId}">
+                            <h:outputText value="#{costType.costTypeId}" />
+                        </p:column>
+
+                        <p:column headerText="Name" sortBy="#{costType.name}">
+                            <h:outputText value="#{costType.name}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+                <!-- Revenue Types Tab -->
+                <p:tab title="Revenue Types">
+                    <p:dataTable var="revType" value="#{detailsBean.revenueTypes}" paginator="true" rows="10"
+                                 sortBy="#{revType.description}" rowKey="#{revType.revenueTypeId}" responsive="true" 
+                                 emptyMessage="No revenue types found">
+
+                        <p:column headerText="Revenue Type ID" sortBy="#{revType.revenueTypeId}">
+                            <h:outputText value="#{revType.revenueTypeId}" />
+                        </p:column>
+
+                        <p:column headerText="Description" sortBy="#{revType.description}">
+                            <h:outputText value="#{revType.description}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+                <!-- Factor Names Tab -->
+                <p:tab title="Factor Names">
+                    <p:dataTable var="factor" value="#{detailsBean.factorNames}" paginator="true" rows="10"
+                                 sortBy="#{factor.name}" rowKey="#{factor.factorNameId}" responsive="true" 
+                                 emptyMessage="No factor names found">
+
+                        <p:column headerText="Factor Name ID" sortBy="#{factor.factorNameId}">
+                            <h:outputText value="#{factor.factorNameId}" />
+                        </p:column>
+
+                        <p:column headerText="Name" sortBy="#{factor.name}">
+                            <h:outputText value="#{factor.name}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+            </p:tabView>
+        </div>
+
+    </h:form>
+</h:body>
+</html>
